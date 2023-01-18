@@ -8,14 +8,17 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-mongoClient = MongoClient('mongodb://127.0.0.1:27017')
+mongoClient = MongoClient(
+    'mongodb://admin:QWEASD123@192.168.101.15:27777/?authSource=admin')
 db = mongoClient.get_database('names_db')
 names_col = db.get_collection('names_col')
+
 
 @app.route('/addname/<name>/')
 def addname(name):
     names_col.insert_one({"name": name.lower()})
     return redirect(url_for('getnames'))
+
 
 @app.route('/getnames/')
 def getnames():
@@ -26,8 +29,9 @@ def getnames():
             names_json.append({"name": name['name'], "id": str(name['_id'])})
             count += 1
             if count == 4:
-            	break
+                break
     return json.dumps(names_json)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
